@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>  
+    <style>
+    body {  
+        background-color: rgb(200, 198, 198);
+        /*background-image: linear-gradient(to right, #8e2de2, #4a00e0);*/  
+      }
+      .card {
+        background-color:rgba(255, 255, 255, 1);;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        transition: 0.3s;
+        width: 100%;
+        border-radius: 5px;
+      }
+      .titlecard {
+        background-color:rgba(255, 255, 255, 1);;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        transition: 0.3s;
+        width: 100%;
+        border-radius: 5px;
+      }
+      
+      .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.8);
+      }
+      
+      img {
+        border-radius: 5px 5px 0 0;
+      }
+      
+      .container {
+        padding: 2px 16px;
+      } 
+      h1 { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 15px; font-weight: 800; line-height: 36px; margin: 0 0 24px; text-align: center; }
+      h2 { color: #0072aa; font-family: 'Raleway',sans-serif; font-size: 25px; font-weight: 800; line-height: 72px; margin: 0 0 24px; text-transform: uppercase; }
+      h3 { color: #00a50e; font-family: 'Raleway',sans-serif; font-size: 25px; font-weight: 800; line-height: 72px; margin: 0 0 24px; text-transform: uppercase; }
+      h4 { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 25px; font-weight: 800; line-height: 12px; margin: 0 0 13px; text-transform: uppercase; text-align: center;}
+      h5 { color: #2c2c2c; font-family: 'Raleway',sans-serif; font-size: 30px; font-weight: 800; line-height: 36px; margin: 0 0 24px; text-align: center; }
+      h6 { color: #2c2c2c; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 36px; margin: 0 0 24px; text-align: center; } 
+      p { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 14px; font-weight: 500; line-height: 20px; margin: 0 0 24px; }
+      h1, h2, h3 {
+        width: 50%;
+        height: 60px;
+        margin: 0;
+        padding: 0;
+        display: inline;
+      }
+      input[type=text], select {
+        width: 100%;
+        padding: 10px 15px;
+        margin: 1px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      input[type=date], select {
+        width: 100%;
+        padding: 10px 15px;
+        margin: 1px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      input[type=submit] {
+        width: 100%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      input[type=button] {
+        width: 100%;
+        background-color: #cc2c16;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      
+      input[type=submit]:hover {
+        background-color: #45a049;
+      }
+      
+      div {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+      }
+    </style>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> 
+<script>
+    function add() { 
+      var Name = document.getElementById('name').value;
+      var PlantingDate = toString(document.getElementById('PlantingDate').value);
+      var HarvestDate = toString(document.getElementById('HarvestDate').value);
+      var RAirTemp = document.getElementById('RAirTemp').value;
+      var RHumidity = document.getElementById('RHumidity').value;
+      var RSoilTemp = document.getElementById('RSoilTemp').value;
+      var RSoilMoist = document.getElementById('RSoilMoist').value;
+      var RLux = document.getElementById('RLux').value;
+      var RTimePerWater = document.getElementById('RTimePerWater').value;
+      var RWaterPerInt = document.getElementById('RWaterPerInt').value;
+      console.log(Name + PlantingDate + HarvestDate + RAirTemp + RHumidity + RSoilTemp + RSoilMoist + RLux + RTimePerWater + RWaterPerInt);
+      const dict_values = {Name, PlantingDate};
+      const s = JSON.stringify(dict_values);
+      $.ajax({
+			url: '/newplant',
+			data: $('form').serialize(),
+			type: 'POST',
+			success: function(response){
+				console.log(response);
+			},
+			error: function(error){
+				console.log(error);
+			}
+		});
+    };
+    function del() {
+        console.log("Resetting");
+        elem = document.getElementById("remove");
+        elem.value="Plants Cleared!";
+        location.reload();
+        $.ajax({
+			url: '/noplant',
+			data: $('form').serialize(),
+			type: 'POST',
+			success: function(response){
+				console.log(response);
+			},
+			error: function(error){
+				console.log(error);
+			}
+		});
+    };
+</script>
+<body>
+<table width ="100%">
+<table width="100%" max-width="100%" >
+    <tr valign="top">
+<td width ="50%" max-width = "50%">
+<div class="card">
+  <h2>Add in plant data</h2>
+    <form>
+      <h1>Plant Name: <input type="text" name="name" id="name"></h1><br>
+      <h1>Planting Date: <input type="date" id="PlantingDate" name="PlantingDate"
+        value="2023-01-01"
+        min="2023-01-01" max="9999-12-31"></h1><br>
+      <h1>Harvest Date:  <input type="date" id="HarvestDate" name="HarvestDate"
+        value="2023-01-01"
+        min="2023-01-01" max="9999-12-31"></h1><br></h1><br>
+      <h1>Recommended Average Air Temperature (ºC): <input type="text" pattern="[0-9]+" name="RAirTemp" id="RAirTemp"></h1><br>
+      <h1>Recommended Humidity (0 - 100): <input type="text" pattern="[0-9]+" name="RHumidity" id="RHumidity"></h1><br>
+      <h1>Recommended Average Soil Temperature (ºC): <input type="text" pattern="[0-9]+" name="RSoilTemp" id="RSoilTemp"></h1><br>
+      <h1>Recommended Average Soil Moisture (0 - 100): <input type="text" pattern="[0-9]+" name="RSoilMoist" id="RSoilMoist"></h1><br>
+      <h1>Recommended Lux Level (LUX): <input type="text" pattern="[0-9]+" name="RLux" id="RLux"></h1><br>
+      <h1>Recommended amount of time per water (s): <input type="text" pattern="[0-9]+" name="RTimePerWater" id="RTimePerWater"></h1><br>
+      <h1>Recommended water amout per interval (mL): <input type="text" pattern="[0-9]+" name="RWaterPerInt" id="RWaterPerInt"></h1><br>
+    <input type="submit" value="Add Plant" onclick="add()" id = "remove">
+      </form>
+</div>
+</td>
+<td>
+</td>
+<td width ="47%" max-width = "47%">
+<div class="card">
+  <h5>Welcome to the setup!</h5>
+  <h6>IMPORTANT! </h6>
+  <p>This is where you put in your plant's infomation, this infomation will be used to determin when or not to water the plant, make sure to fill out this infomation correctly, or else your plant will suffer. Once you are done, hit the Add Plant button on the bottom left side of the screen, if you either added something wrong or just want to restart but already added a new plant click reset plants button underneath. Keep in mind that this system is built to manage mulitple plants, running on their own systems simultaneously, so adding a plant name is recommended to understand what plant the data is reffering to. These values are reccomendations to the system, the system will take these values under consideration and may not follow all conditions that are set.</p>
+    <input type="button" value = "Reset plants" onclick="del()">
+</div>
+</td>
+<div class="titlecard">
+    <h4>Plant Setup - BETA Build</h4>
+</div>
+<br>
+</table>
+</table>
+

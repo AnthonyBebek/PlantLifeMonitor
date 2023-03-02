@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>  
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+    <style>
+    body {  
+        background-color: rgb(200, 198, 198);
+        /*background-image: linear-gradient(to right, #8e2de2, #4a00e0);*/  
+      }
+      .card {
+        background-color:rgba(255, 255, 255, 1);;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        transition: 0.3s;
+        width: 100%;
+        border-radius: 5px;
+      }
+      .titlecard {
+        background-color:rgba(255, 255, 255, 1);;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        transition: 0.3s;
+        width: 100%;
+        border-radius: 5px;
+      }
+      
+      .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.8);
+      }
+      
+      img {
+        border-radius: 5px 5px 0 0;
+      }
+      
+      .container {
+        padding: 2px 16px;
+      } 
+      h1 { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; text-transform: uppercase; }
+      h2 { color: #0072aa; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; }
+      h3 { color: #00a50e; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; text-transform: uppercase; }
+      h4 { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; text-transform: uppercase; text-align: center;}
+      h1, h2, h3 {
+        width: 50%;
+        height: 60px;
+        margin: 0;
+        padding: 0;
+        display: inline;
+      }
+    </style>
+</head>  
+<script src="{{url_for('static', filename='Chart.js')}}"></script>
+<body>
+<table width ="100%">
+<table width="100%" max-width="100%" >
+    <tr valign="top">
+<td width ="50%" max-width = "100%">
+<div class="card">
+    <div class="container">
+        <canvas id="Temps"></canvas> 
+    </div>
+</div>
+</td>
+<td width = "50%" max-width = "100%">
+<div class="card">
+    <div class="container">
+        <canvas id="Moisture"></canvas>
+    </div>
+</td>
+</tr>
+<tr>
+<td width = "50%" max-width = "100%">
+<div class="card">
+    <div class="container">
+        <div style="clear: both">
+            <h1>EST. next water time: </h1>
+            <h2 id="Estimated_next_water_time"></h2> 
+        <div style="clear: both">
+            <h1>Last water time: </h1>
+            <h2 id="Last_water_time"></h2>   
+        </div>
+        <div style="clear: both">
+            <h1>Current Water Tank Level: </h1>
+            <h2 id="Current_Water_Level"></h2> 
+        </div>
+        <div style="clear: both">
+            <h1>EST. next water refill: </h1>
+            <h2 id="Estimated_next_water_refill"></h2>  
+        </div>
+        <div style="clear: both">
+            <h1>Water usage since planting: </h1>
+            <h2 id="Water_useage_since_planting"></h2> 
+        </div>
+        </div>
+    </div>
+</div>
+</td>
+    <td width = "50%" max-width = "100%">
+    <div class="card">
+        <div class="container">
+            <div style="clear: both">
+                <h1>Last light level: </h1>
+                <h2 id="Current_light_level"></h2> 
+            </div>
+            <div style="clear: both">
+                <h1>Days since planting: </h1>
+                <h2 id="Days_since_planting"></h2> 
+            </div>
+            <div style="clear: both">
+                <h1>Days till harvest: </h1>
+                <h2 id="Estimated_days_till_harvest"></h2> 
+            </div>
+            <div style="clear: both">
+                <h1>Planting Date: </h1>
+                <h2 id="Planting_Date"></h2> 
+            </div>
+            <div style="clear: both">
+                <h1>Harvest Date: </h1>
+                <h2 id="Estimated_harvest_Date"></h2> 
+            </div>
+        </div>
+    </div>
+    </td>
+</tr>
+<tr>
+    <div class="titlecard">
+        <h4>Crop Manager - BETA Build</h4>
+    </div>
+</table>
+</table>
+
+<script src="{{url_for('static', filename='jquery.min.js')}}"></script> 
+
+<script>
+var result;
+$.ajax({
+  type: "GET",
+  url: "/soil_temp/",
+  async: false,
+  success: function(res){
+    soil_temp = res;
+    console.log("Soil Temp data: "+soil_temp);                
+  }
+});
+
+$.ajax({
+    type: "GET",
+    url: "/air_temp/",
+    async: false,
+    success: function(res){
+      air_temp = res;
+      console.log("Air Temp data: "+air_temp);                
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/air_water/",
+    async: false,
+    success: function(res){
+      air_water = res;
+      console.log("Air Water data: "+air_water);                
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/soil_water/",
+    async: false,
+    success: function(res){
+      soil_water = res;
+      console.log("Soil Water data: "+soil_water);                  
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Estimated_next_water_time/",
+    async: false,
+    success: function(res){
+        Estimated_next_water_time = res;
+      console.log("Estimated_next_water_time data: "+Estimated_next_water_time); 
+      document.getElementById('Estimated_next_water_time').innerHTML = Estimated_next_water_time;                     
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Last_water_time/",
+    async: false,
+    success: function(res){
+        Last_water_time = res;
+      console.log("Last_water_time data: "+Last_water_time);  
+      document.getElementById('Last_water_time').innerHTML = Last_water_time;              
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Current_Water_Level/",
+    async: false,
+    success: function(res){
+        Current_Water_Level = res;
+      console.log("Current_Water_Level data: "+Current_Water_Level); 
+      document.getElementById('Current_Water_Level').innerHTML = Current_Water_Level;                
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Estimated_next_water_refill/",
+    async: false,
+    success: function(res){
+        Estimated_next_water_refill = res;
+      console.log("Estimated_next_water_refill data: "+Estimated_next_water_refill);
+      document.getElementById('Estimated_next_water_refill').innerHTML = Estimated_next_water_refill;                
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Water_useage_since_planting/",
+    async: false,
+    success: function(res){
+        Water_useage_since_planting = res;
+      console.log("Water_useage_since_planting data: "+Water_useage_since_planting);
+      document.getElementById('Water_useage_since_planting').innerHTML = Water_useage_since_planting;                
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Current_light_level/",
+    async: false,
+    success: function(res){
+        Current_light_level = res;
+      console.log("Current_light_level data: "+Current_light_level); 
+      document.getElementById('Current_light_level').innerHTML = Current_light_level;                  
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Days_since_planting/",
+    async: false,
+    success: function(res){
+        Days_since_planting = res;
+      console.log("Days_since_planting data: "+Days_since_planting); 
+      document.getElementById('Days_since_planting').innerHTML = Days_since_planting;                  
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Estimated_days_till_harvest/",
+    async: false,
+    success: function(res){
+        Estimated_days_till_harvest = res;
+      console.log("Estimated_days_till_harvest: "+Estimated_days_till_harvest);
+      document.getElementById('Estimated_days_till_harvest').innerHTML = Estimated_days_till_harvest;                    
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Planting_Date/",
+    async: false,
+    success: function(res){
+        Planting_Date = res;
+      console.log("Planting_Date data: "+Planting_Date); 
+      document.getElementById('Planting_Date').innerHTML = Planting_Date;                
+    }
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "/Estimated_harvest_Date/",
+    async: false,
+    success: function(res){
+        Estimated_harvest_Date = res;
+      console.log("Estimated_harvest_Date data: "+Estimated_harvest_Date);    
+      document.getElementById('Estimated_harvest_Date').innerHTML = Estimated_harvest_Date;                  
+    }
+  });
+
+  
+
+  $.ajax({
+    type: "GET",
+    url: "/timelabels/",
+    async: false,
+    success: function(res){
+        timelabels = res;
+      console.log(timelabels);                     
+    }
+  });
+
+
+Chart.defaults.color = '#000';
+new Chart("Temps", {
+  type: "line",
+  data: {
+    labels: timelabels.split(","),
+    datasets: [{ 
+        data: air_temp,
+        label: "Air Temp",
+        borderColor: "#eb3434",
+        fill: false
+      }, { 
+        data: soil_temp,
+        label: "Soil Temp",
+        borderColor: "#eb7734",
+        fill: false
+      }
+    ]
+  },
+  options: {
+    title: {
+        display: true,
+        text: 'Air and Soil Temperature in last 48 hours (°C)'
+      },
+    legend: {display: true},
+    scales: {
+      xAxes: [{ticks: {min: 0, max:49 }} ],
+      yAxes: [{ticks: {min: 15, max:40}, color: '#142ffc'}],
+    }
+  }
+  
+});
+
+new Chart("Moisture", {
+    type: "line",
+    data: {
+      labels: timelabels.split(","),
+      datasets: [{ 
+          data: air_water,
+          label: "Air Moisture",
+          borderColor: "#34dbeb",
+          backgroundColor: '#34dbeb',
+          fill: false
+        }, { 
+          data: soil_water,
+          label: "Soil Moisture",
+          borderColor: "#3e95cd",
+          backgroundColor: '#3e95cd',
+          fill: false
+        }
+      ]
+    },
+    options: {
+      title: {
+          display: true,
+          text: 'Air and Soil Moisture in last 48 hours (%)'
+        },
+      legend: {display: true},
+      scales: {
+        xAxes: [{ticks: {min: 0, max:49}}],
+        yAxes: [{ticks: {min: 0, max:100}}],
+      }
+    }
+  });
+</script>
+
+
+</body>
+</html>

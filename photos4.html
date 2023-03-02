@@ -1,0 +1,32 @@
+<!doctype html>
+  <head> 
+    <title>Image Gallery</title> 
+	<link rel="stylesheet" type="text/css" href="styles.css">
+  </head> 
+  <body> 
+    <div class="intro"> 
+      <h2>Image Gallery</h2> 
+      <p>Select a thumbnail below to view the image</p> 
+	  <div id="image-gallery">
+	    <img id="current-image" src="/static/images/">
+		<div id="image-thumbs"></div>
+      </div>
+    </div> 
+	<script>
+    var imageThumbs = document.getElementById("image-thumbs");
+        var currentImage = document.getElementById("current-image");
+        
+        for (var i = 1; i <= 30; i++) {
+          var thumb = document.createElement("img");
+          thumb.src = "static/images/image" + i + ".jpg";
+          thumb.classList.add("thumb");
+          imageThumbs.appendChild(thumb);
+          thumb.addEventListener(
+            "click", function() {
+              currentImage.src = this.src;
+            }
+          );
+        }
+    </script>
+  </body>
+</html>
