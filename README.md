@@ -12,3 +12,4 @@ Python imports:
 -- chartjs
 -- croniter
 
+Flask needs to be installed into this directory for the program to run correctly.
