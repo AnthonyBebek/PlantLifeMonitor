@@ -21,3 +21,5 @@ Application.py - file serves the HTML files found in the templates folder
 Calcs.py - calls for the Coms.py file and the DB.py file to determin if the plant needs watering or not
 Predictions.py - predicts if the plant needs watering or not
 Update.sh - Runs the Application.py file in a python virtual enviroment
+
+Get the ISO file here: https://drive.google.com/file/d/1BN1muYDiF5sIKCxGLZ_ClekoyyZy8rxy/view?usp=share_link
