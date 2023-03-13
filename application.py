@@ -5,7 +5,9 @@ import datetime
 import DB
 import croniter
 import serial
+import os
 from datetime import date, time, datetime, timedelta
+import time
 import json
 from flask import (
     Flask,
@@ -209,13 +211,19 @@ def index():
     global soil_water_data
     return render_template('index.html', air_tmp_data=air_tmp_data, soil_tmp_data=soil_tmp_data, air_water_data=air_water_data, soil_water_data=soil_water_data)
 
+@app.route('/photolist/')
+def photolist():
+    dir_path = r'./static/images'
+    count = 0
+    for path in os.listdir(dir_path):
+        if os.path.isfile(os.path.join(dir_path, path)):
+            count += 1
+    print('File count:', count)
+    return str(count)
+
 @app.route('/photos')
 def photos():
     return render_template('photos.html')
-
-@app.route('/photolist')
-def photolist():
-    return str(30)
 
 @app.route('/setup')
 def setup():
@@ -257,6 +265,43 @@ def newplant():
     RWaterPerInt = request.form['RWaterPerInt']
     DB.newplant(name, Plantdate, Harvestdate, RAirTemp, RHumidity, RSoilTemp, RSoilMoist, RLux, RTimePerWater, RWaterPerInt)
     return json.dumps({'status':'OK'})
+
+@app.route('/updatespecs')
+def updatespecs():
+    os.system("sudo bash /home/pi/Documents/Programming/www/update.sh")
+    return "Ok"
+
+def pump(delay):
+    print("Pumping")
+    ser = serial.Serial('/dev/ttyACM0',9600, timeout=1)
+    ser.reset_input_buffer()
+    WL = ""
+    while WL == "":
+        ser.write(b"9\n")
+        WL = ser.readline().decode('utf-8').rstrip()
+    time.sleep(delay)
+    WL = ""
+    while WL == "":
+        ser.write(b"8\n")
+        WL = ser.readline().decode('utf-8').rstrip()
+    ser.close()
+
+
+@app.route('/waterrn')
+def waterrn():
+    start = datetime.now()
+    pump(0.25)
+    end = datetime.now()
+    amount = datetime.now()
+    diff = (end - start).total_seconds()
+    amount = diff * 27
+    DB.updatewater(str(start)[:-7], str(end)[:-7], int(amount))
+    return "Ok"
+
+@app.route('/photonow')
+def photonow():
+    os.system("sudo bash /home/pi/Documents/Programming/www/takephoto.sh")
+    return "Ok"
 
 @app.route('/noplant', methods = ['POST'])
 def noplant():
