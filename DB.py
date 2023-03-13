@@ -1,5 +1,21 @@
 import mariadb
 import sys
+import csv
+
+def getall():
+    conn = mariadb.connect(
+        user="Growth",
+        password="Growth",
+        host="127.0.0.1",
+        port=3306,
+        database="Growth")
+    cur = conn.cursor(buffered=True)
+    cur.execute("SELECT M_AirTemp, M_Humidity, M_SoilTemp, M_SoilMoisture, M_LuxLevel, Watered From CropSensors")
+    c = csv.writer(open("temp.csv", "w"))
+    for water in cur:
+         c.writerow(water)
+    conn.close
+
 
 def getlastMAir():
     conn = mariadb.connect(
@@ -13,7 +29,7 @@ def getlastMAir():
     temperature = []
     Times = []
     cur = conn.cursor(buffered=True)
-    cur.execute("SELECT M_AirTemp, DATE_FORMAT(MeasurementTime, \"%d\" \" \" \"%b\" \" \" \"%Y\" \" - \" \"%H\" \":\" \"%i\") From CropSensors WHERE MeasurementTime >= (DATE(NOW())-1/24) LIMIT 48;")
+    cur.execute("SELECT * FROM (SELECT M_AirTemp, DATE_FORMAT(MeasurementTime, '%d %b %Y - %H:%i') AS formatted_time FROM CropSensors ORDER BY MeasurementTime DESC LIMIT 48) AS Temp ORDER BY Temp.formatted_time ASC;")
     for water in cur:
         temp.append(water)
     for index in range(len(temp)):
@@ -41,7 +57,7 @@ def getlastMSoil():
     temperature = []
     Times = []
     cur = conn.cursor(buffered=True)
-    cur.execute("SELECT M_SoilTemp, MeasurementTime From CropSensors WHERE MeasurementTime >= (DATE(NOW())-1/24) LIMIT 48;")
+    cur.execute("SELECT * FROM (SELECT M_SoilTemp, DATE_FORMAT(MeasurementTime, '%d %b %Y - %H:%i') AS formatted_time FROM CropSensors ORDER BY MeasurementTime DESC LIMIT 48) AS Temp ORDER BY Temp.formatted_time ASC;")
     for water in cur:
         temp.append(water)
     for index in range(len(temp)):
@@ -69,7 +85,7 @@ def getlastMHumid():
     temperature = []
     Times = []
     cur = conn.cursor(buffered=True)
-    cur.execute("SELECT M_Humidity, MeasurementTime From CropSensors WHERE MeasurementTime >= (DATE(NOW())-1/24) LIMIT 48;")
+    cur.execute("SELECT * FROM (SELECT M_Humidity, DATE_FORMAT(MeasurementTime, '%d %b %Y - %H:%i') AS formatted_time FROM CropSensors ORDER BY MeasurementTime DESC LIMIT 48) AS Temp ORDER BY Temp.formatted_time ASC;")
     for water in cur:
         temp.append(water)
     for index in range(len(temp)):
@@ -98,7 +114,7 @@ def getlastMSoilMoist():
     temperature = []
     Times = []
     cur = conn.cursor(buffered=True)
-    cur.execute("SELECT M_SoilMoisture, DATE_FORMAT(MeasurementTime, \"%d\" \" \" \"%b\" \" \"  \"%H\" \":\" \"%i\" ) From CropSensors WHERE MeasurementTime >= (DATE(NOW())-1/24) LIMIT 48;;") 
+    cur.execute("SELECT * FROM (SELECT M_SoilMoisture, DATE_FORMAT(MeasurementTime, '%d %b %Y - %H:%i') AS formatted_time FROM CropSensors ORDER BY MeasurementTime DESC LIMIT 48) AS Temp ORDER BY Temp.formatted_time ASC;") 
     for water in cur:
         temp.append(water)
     for index in range(len(temp)):
@@ -185,6 +201,8 @@ def updatewater(start, end, amount):
         cur = conn.cursor()
         #print("INSERT INTO CropSustenance (`Timestamp`, `PlantName`, `FeedStartTime`, `FeedStopTime`, `FeedVolume`) VALUES (CURTIME(), \"" + str("Cress") + "\", " + str(start) + ", " + str(end) + ", " + str(amount) + ");")
         cur.execute("INSERT INTO CropSustenance (`Timestamp`, `PlantName`, `FeedStartTime`, `FeedStopTime`, `FeedVolume`) VALUES (CURTIME(), \"" + str("Cress") + "\", \"" + str(start) + "\", \"" + str(end) + "\", " + str(amount) + ");")
+        conn.commit()
+        cur.execute("UPDATE CropSensors SET `Watered` = 1 ORDER BY `ID` DESC LIMIT 1;")
         conn.commit()
         conn.close()
 
