@@ -11,6 +11,14 @@ img {vertical-align: middle;}
   position: relative;
   margin: auto;
 }
+.thumb {
+  width: 80%;
+  height: 80%;
+  padding: 0;
+  display: inline;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /* Next & previous buttons */
 .prev, .next {
@@ -32,6 +40,13 @@ img {vertical-align: middle;}
 .next {
   right: 0;
   border-radius: 3px 0 0 3px;
+  background-color: rgba(0,0,0,0.6)
+}
+
+.prev {
+  right: 1;
+  border-radius: 3px 0 0 3px;
+  background-color: rgba(0,0,0,0.6)
 }
 
 /* On hover, add a black background color with a little bit see-through */
@@ -73,6 +88,16 @@ img {vertical-align: middle;}
 
 .active, .dot:hover {
   background-color: #717171;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 /* Fading animation */
@@ -86,25 +111,61 @@ img {vertical-align: middle;}
   to {opacity: 1}
 }
 
-/* On smaller screens, decrease text size */
 @media only screen and (max-width: 300px) {
   .prev, .next,.text {font-size: 11px}
 }
+body {  
+        background-color: rgb(200, 198, 198);
+        /*background-image: linear-gradient(to right, #8e2de2, #4a00e0);*/  
+      }
+      .card {
+        background-color:rgba(255, 255, 255, 1);;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        transition: 0.3s;
+        width: 100%;
+        border-radius: 5px;
+      }
+      .titlecard {
+        background-color:rgba(255, 255, 255, 1);;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.1);
+        transition: 0.3s;
+        width: 100%;
+        border-radius: 5px;
+      }
+      
+      .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0,0,0,0.8);
+      }
+h1 { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; text-transform: uppercase; text-align: center;}
+h2 { color: #0072aa; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; text-align: center;}
+h3 { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; text-align: center;}
+h4 { color: #3e3e3e; font-family: 'Raleway',sans-serif; font-size: 20px; font-weight: 800; line-height: 60px; margin: 0 0 24px; text-transform: uppercase; text-align: center;}
+.photo {
+        width: 100%;
+        background-color: #16cc8f;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }   
     </style>
-  <head> 
-    <title>Image Gallery</title> 
+  <head>  
+  <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='icon.png')}}">
   </head> 
   <body> 
-    <div class="intro"> 
-      <h2>Image Gallery</h2> 
-      <p>Select a thumbnail below to view the image</p> 
+    <div class="card" width = "%50">
+      <div class="container" width = "%50">
+          <div style="clear: both" width = "%50">
+      <h3>Every Day a photo of your plant is taken, check your plants growth here</h3> 
 	  <div id="image-gallery">
-	    <img id="current-image" src="/static/images/">
-		<div id="image-thumbs"></div>
+		<div id="image-thumbs" class="centre"></div>
       </div>
     </div> 
     <a class="prev" onclick="plusSlides(-1)">❮</a>
     <a class="next" onclick="plusSlides(1)">❯</a>
+    <input type="button" class ="photo" value = "Take Current Photo" onclick="photonow()">
     <script src="{{url_for('static', filename='jquery.min.js')}}"></script> 
     <script>
         $.ajax({
@@ -116,6 +177,17 @@ img {vertical-align: middle;}
           console.log("photos data: "+list);  
             
     }});
+    function photonow(){
+  $.ajax({
+    type: "GET",
+    url: "/photonow",
+    async: false,
+    success: function(res){
+        updatespecs = res;                     
+    }
+  });
+  setTimeout(location.reload(), 10000);
+}
       var imageThumbs = document.getElementById("image-thumbs");
       var currentImage = document.getElementById("current-image");
       for (var i = 1; i <= list; i++) {
