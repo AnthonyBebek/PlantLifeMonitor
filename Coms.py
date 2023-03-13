@@ -30,32 +30,32 @@ def getvalues():
 	while lux == "":
 		ser.write(b"4\n")
 		lux = ser.readline().decode('utf-8').rstrip()
-	print("Light Level: ",lux)
+	#print("Light Level: ",lux)
 	lux = str(lux)
 	while airT == "":
 		ser.write(b"2\n")
 		airT = ser.readline().decode('utf-8').rstrip()
-	print("Air Temp: ", airT)
+	#print("Air Temp: ", airT)
 	airT = str(airT)
 	while airM == "":
 		ser.write(b"3\n")
 		airM = ser.readline().decode('utf-8').rstrip()
-	print("Air Moisture: ", airM)
+	#print("Air Moisture: ", airM)
 	airM = str(airM)
 	while ST == "":
 		ser.write(b"5\n")
 		ST = ser.readline().decode('utf-8').rstrip()
-	print("Soil Temp: ", ST)
+	#print("Soil Temp: ", ST)
 	ST = str(ST)
 	while SM == "":
 		ser.write(b"6\n")
 		SM = ser.readline().decode('utf-8').rstrip()
-	print("Soil Moisture: ", SM)
+	#print("Soil Moisture: ", SM)
 	SM = str(SM)
 	while WL == "":
 		ser.write(b"7\n")
 		WL = ser.readline().decode('utf-8').rstrip()
-	print("Water Level: ", WL)
+	#print("Water Level: ", WL)
 	WL = str(WL)
 	ser.close()
 	lux = float(lux)
