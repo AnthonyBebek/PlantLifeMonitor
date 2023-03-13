@@ -72,23 +72,35 @@ def water(delay):
 
 if AirTemp > maxATemp:
     reason = reason + "1"
-    delay = delay + 0.5
+    delay = delay + 0.05
 
 if Humidity > minAmoisture:
     reson = reason + "2"
-    delay = delay + 0.5
+    delay = delay + 0.05
 
 if SoilTemp > maxStemp:
     reason = reason + "3"
-    delay = delay + 0.5
+    delay = delay + 0.05
 
 if SoilMoisture < minSmoisture:
     reason = reason + "4"
-    delay = delay + 1.5
+    delay = delay + 0.9
 
-if Lux > maxLight:
+if Lux < maxLight:
     reason = reason + "5"
-    delay = delay + 0.25
+    delay = delay + 0.025
+
+if SoilMoisture > 80:
+    reason = reason + " But too wet! so no water"
+    delay = 0 
+print("AirTemp:", AirTemp, "Max:", maxATemp)
+print("Humidity:", Humidity, "Max:", minAmoisture)
+print("SoilTemp:", SoilTemp, "Max:", maxStemp)
+if minSmoisture > 80:
+    print("SoilMoisture:", SoilMoisture, "Max: 80")
+else:
+    print("SoilMoisture:", SoilMoisture, "Max:", minSmoisture)
+print("Lux:", Lux, "Max", maxLight)
 
 if AirTemp > maxATemp or Humidity > minAmoisture or SoilTemp > maxStemp or SoilMoisture < minSmoisture or Lux > maxLight:
     print("Plant needs water!")
@@ -111,5 +123,8 @@ else:
     t3 = t3.split(",")
     now = datetime.now()
     if now.hour -1 == t1[3] or now.hour - 1 == t2[3] or now.hour -1 == t3[3]:
-        water(1)
-        print("Plant watered because it might get hot soon")
+        if SoilMoisture > 80:
+            print("Not watering because too wet, maybe water in an hour!") 
+        else:
+            water(0.3)
+            print("Plant watered because it might get hot soon")
