@@ -39,8 +39,6 @@ Flask needs to be installed into this directory for the program to run correctly
 ## Flow Chart
 <img width="404" alt="image6" src="https://github.com/Fox2low/PlantLifeMonitor/assets/77130209/1c65709a-15fb-41a2-89e8-b01a4319efaa">
 
-## Roadmap
-![image4](https://github.com/Fox2low/PlantLifeMonitor/assets/77130209/67a1b72d-6b3f-479f-b270-be127c6eb903)
 
 
 
